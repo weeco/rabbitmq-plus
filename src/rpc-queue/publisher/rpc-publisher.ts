@@ -6,7 +6,7 @@ import { IHasContext } from '../interfaces/has-context.interface';
 import { IPreSerializedResponseFormat } from '../interfaces/serialized-response-format.interface';
 import { PromiseMessageMap } from './promise-message-map';
 
-export class RPCPublisher {
+export class RpcPublisher {
   private messageMap: PromiseMessageMap;
   private readonly directReplyQueueName: string = 'amq.rabbitmq.reply-to';
 
@@ -28,7 +28,7 @@ export class RPCPublisher {
     exchangeOptions: Options.AssertExchange = {},
     exchangeName?: string,
     exchangeType?: string
-  ): Promise<RPCPublisher> {
+  ): Promise<RpcPublisher> {
     const channel: Channel = await connection.createChannel();
     await channel.assertQueue(queueName, queueOptions);
     if (exchangeType != null) {
@@ -36,7 +36,7 @@ export class RPCPublisher {
       await channel.bindQueue(queueName, exchangeName, exchangeType);
     }
 
-    const instance: RPCPublisher = new RPCPublisher(channel, queueName, prefetchCount, isGlobalPrefetchCount);
+    const instance: RpcPublisher = new RpcPublisher(channel, queueName, prefetchCount, isGlobalPrefetchCount);
     await instance.init();
 
     return instance;

@@ -7,7 +7,7 @@ import {
   RabbitMQPlus,
   RpcConsumer,
   RpcConsumerMessage,
-  RPCPublisher
+  RpcPublisher
 } from '../../src/index';
 import { rabbitOptions } from './init.spec';
 
@@ -25,7 +25,7 @@ class ExampleMessage implements IHasContext {
 describe('RPC communication', () => {
   const testQueueName: string = 'rpc-communication-spec';
   let rabbitPlus: RabbitMQPlus;
-  let publisher: RPCPublisher;
+  let publisher: RpcPublisher;
   let consumer: RpcConsumer;
   let controlChannel: Channel;
   before(async () => {
@@ -35,7 +35,7 @@ describe('RPC communication', () => {
 
   beforeEach(async () => {
     await controlChannel.deleteQueue(testQueueName);
-    publisher = await RPCPublisher.CREATE(rabbitPlus.connection, testQueueName, 1, false, { durable: false });
+    publisher = await RpcPublisher.CREATE(rabbitPlus.connection, testQueueName, 1, false, { durable: false });
     consumer = await RpcConsumer.CREATE(rabbitPlus.connection, testQueueName, 5, false, { durable: false });
   });
 

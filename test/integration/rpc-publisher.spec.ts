@@ -1,14 +1,14 @@
 import { Channel, Replies } from 'amqplib';
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { IHasContext, RabbitMQPlus, RPCPublisher } from '../../src/index';
+import { IHasContext, RabbitMQPlus, RpcPublisher } from '../../src/index';
 import { sleep } from '../util/sleep';
 import { rabbitOptions } from './init.spec';
 
 describe('RPC Publisher', () => {
   const testQueueName: string = 'rpc-publisher-spec';
   let rabbitPlus: RabbitMQPlus;
-  let publisher: RPCPublisher;
+  let publisher: RpcPublisher;
   let controlChannel: Channel;
 
   before(async () => {
@@ -18,7 +18,7 @@ describe('RPC Publisher', () => {
 
   beforeEach(async () => {
     await controlChannel.deleteQueue(testQueueName);
-    publisher = await RPCPublisher.CREATE(rabbitPlus.connection, testQueueName, 1, false, { durable: false });
+    publisher = await RpcPublisher.CREATE(rabbitPlus.connection, testQueueName, 1, false, { durable: false });
   });
 
   after(async () => {
