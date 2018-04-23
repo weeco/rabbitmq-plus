@@ -2,9 +2,14 @@
   "name": "rabbitmq-plus",
   "version": "1.0.0",
   "description": "RabbitMQ plus",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "clean:windows": "if exist lib rmdir /s /q lib",
+    "format": "prettier --write \"**/*.ts\"",
+    "test": "mocha -r ts-node/register test/**/*.spec.ts",
+    "prepublishOnly": "npm run clean:windows && npm run build"
   },
   "repository": {
     "type": "git",
