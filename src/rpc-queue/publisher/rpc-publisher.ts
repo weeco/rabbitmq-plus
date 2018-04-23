@@ -60,7 +60,7 @@ export class RPCPublisher {
     const serialized: string = JSON.stringify(requestMessage);
     const message: Buffer = Buffer.from(serialized);
 
-    const deferred: Deferred = new Deferred(timeoutMs);
+    const deferred: Deferred = new Deferred();
     const correlationId: string = uuid();
     this.messageMap.addDispatchedMessage(correlationId, deferred);
     this.channel.sendToQueue(this.queueName, message, {
@@ -68,6 +68,14 @@ export class RPCPublisher {
       correlationId,
       replyTo: this.directReplyQueueName
     });
+
+    // Reject promise after timeout
+    if (timeoutMs) {
+      setTimeout(() => {
+        deferred.reject(new Error(`Timeout of ${timeoutMs}ms exceeded`));
+        this.messageMap.deleteDispatchedMessage(correlationId);
+      }, timeoutMs);
+    }
 
     return deferred.promise;
   }

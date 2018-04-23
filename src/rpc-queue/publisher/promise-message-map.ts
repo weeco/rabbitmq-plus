@@ -19,4 +19,8 @@ export class PromiseMessageMap {
 
     return deferredPromise;
   }
+
+  public deleteDispatchedMessage(correlationId: string): boolean {
+    return this.promiseMap.delete(correlationId);
+  }
 }

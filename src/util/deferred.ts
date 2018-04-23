@@ -8,17 +8,11 @@ export class Deferred {
   // tslint:disable-next-line:no-any
   public promise: Promise<any>;
 
-  constructor(timeoutMs: number = null) {
+  constructor() {
     // tslint:disable-next-line:promise-must-complete
     this.promise = new Promise((resolve: ResolveFn, reject: RejectFn): void => {
       this.reject = reject;
       this.resolve = resolve;
-
-      if (timeoutMs != null) {
-        setTimeout(() => {
-          this.reject(`Timeout of ${timeoutMs}ms exceeded`);
-        }, timeoutMs);
-      }
     });
   }
 }
