@@ -1,4 +1,4 @@
-import { Channel, Connection, Message, Options } from 'amqplib';
+import { Channel, Connection, Message, Options, Replies } from 'amqplib';
 import { EventEmitter } from 'events';
 import { MessageStatus } from '../enums/message-status';
 import { IHasContext } from '../interfaces/has-context.interface';
@@ -23,11 +23,15 @@ export class RpcConsumer {
   ): Promise<RpcConsumer> {
     const channel: Channel = await connection.createChannel();
 
-    // TODO: Test if assertQueue throws an exception if used with different settings than used on a previously existing queue
-    await channel.assertQueue(queueName, queueOptions);
-    if (exchangeType != null) {
-      await channel.assertExchange(exchangeName, exchangeType, exchangeOptions);
-      await channel.bindQueue(queueName, exchangeName, exchangeType);
+    // Assert the queue if non existent
+    const queueInfo: Replies.AssertQueue = await channel.checkQueue(queueName);
+    const isQueueExistent: boolean = queueInfo != null ? true : false;
+    if (!isQueueExistent) {
+      await channel.assertQueue(queueName, queueOptions);
+      if (exchangeType != null) {
+        await channel.assertExchange(exchangeName, exchangeType, exchangeOptions);
+        await channel.bindQueue(queueName, exchangeName, exchangeType);
+      }
     }
 
     channel.prefetch(prefetchCount, isGlobalPrefetchCount);
@@ -76,7 +80,7 @@ export class RpcConsumer {
       this.emitter.emit(parsedData.context, consumerMessage);
     } catch (err) {
       const errorMessage: IHasResponseFormat = {
-        error: err,
+        error: <Error>err,
         messageStatus: MessageStatus.UnprocessableEntity
       };
       consumerMessage.reply(errorMessage);
@@ -89,7 +93,7 @@ export class RpcConsumer {
    * @param msg The received message
    */
   private parseMessageContent(msg: Message): IHasContext {
-    const parsedContent: IHasContext = JSON.parse(msg.content.toString());
+    const parsedContent: IHasContext = <IHasContext>JSON.parse(msg.content.toString());
 
     // Check if there is a listener for this context
     if (!this.isListenerBound(parsedContent.context)) {
