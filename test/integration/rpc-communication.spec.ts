@@ -1,8 +1,14 @@
 import { Channel } from 'amqplib';
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { IHasContext, MessageStatus, RabbitMQPlus, RpcConsumer, RPCPublisher } from '../../src/index';
-import { RpcConsumerMessage } from '../../src/rpc-queue/consumer/rpc-consumer-message';
+import {
+  IHasContext,
+  MessageStatus,
+  RabbitMQPlus,
+  RpcConsumer,
+  RpcConsumerMessage,
+  RPCPublisher
+} from '../../src/index';
 import { rabbitOptions } from './init.spec';
 
 // Response data model
