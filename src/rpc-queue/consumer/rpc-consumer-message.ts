@@ -15,8 +15,8 @@ export class RpcConsumerMessage<TRequestData extends IHasContext, TResponseData>
    */
   public reply(payload: TResponseData, messageStatus: MessageStatus = MessageStatus.Success, error?: Error): void {
     const serialized: Buffer = this.serializeResponseObject(payload, messageStatus, error);
-    this.channel.sendToQueue(this.requestMessage.properties.replyTo, serialized, {
-      correlationId: this.requestMessage.properties.correlationId
+    this.channel.sendToQueue(<string>this.requestMessage.properties.replyTo, serialized, {
+      correlationId: <string>this.requestMessage.properties.correlationId
     });
     this.channel.ack(this.requestMessage);
   }

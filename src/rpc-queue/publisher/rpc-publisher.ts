@@ -70,7 +70,7 @@ export class RpcPublisher {
     });
 
     // Reject promise after timeout
-    if (timeoutMs) {
+    if (timeoutMs != null) {
       setTimeout(() => {
         deferred.reject(new Error(`Timeout of ${timeoutMs}ms exceeded`));
         this.messageMap.deleteDispatchedMessage(correlationId);
@@ -84,7 +84,7 @@ export class RpcPublisher {
    * Resolves or rejects the deferred promise
    */
   private receiveMessage = (msg: Message): void => {
-    const correlationId: string = msg.properties.correlationId;
+    const correlationId: string = <string>msg.properties.correlationId;
 
     const deferred: Deferred = this.messageMap.getDispatchedMessage(correlationId);
     if (deferred == null) {
@@ -95,9 +95,9 @@ export class RpcPublisher {
       // Check if response is an error
       const messageContent: string = msg.content.toString();
       // tslint:disable-next-line:no-any
-      const response: IPreSerializedResponseFormat = JSON.parse(messageContent);
+      const response: IPreSerializedResponseFormat = <IPreSerializedResponseFormat>JSON.parse(messageContent);
       if (response.messageStatus !== MessageStatus.Success) {
-        const err: Error = JSON.parse(response.error);
+        const err: Error = <Error>JSON.parse(response.error);
         deferred.reject(err);
 
         return;
