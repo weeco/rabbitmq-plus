@@ -10,7 +10,7 @@
     "no-implicit-dependencies": [true, "dev"],
     "export-name": false,
     "missing-jsdoc": false,
-    "await-promise": [true, "RequestPromise"],
+    "await-promise": [true, "RequestPromise", "Bluebird"],
     "completed-docs": false,
     "quotemark": [true, "single", "avoid-escape"],
     "no-parameter-properties": false,
