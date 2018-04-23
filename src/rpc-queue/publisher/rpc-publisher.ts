@@ -98,7 +98,7 @@ export class RPCPublisher {
       const response: IPreSerializedResponseFormat = JSON.parse(messageContent);
       if (response.messageStatus !== MessageStatus.Success) {
         const err: Error = JSON.parse(response.error);
-        deferred.reject(`Consumerexception: ${err}`);
+        deferred.reject(err);
 
         return;
       }

@@ -1,7 +1,7 @@
 import { Channel } from 'amqplib';
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { IHasContext, RabbitMQPlus, RpcConsumer, RPCPublisher } from '../../src/index';
+import { IHasContext, MessageStatus, RabbitMQPlus, RpcConsumer, RPCPublisher } from '../../src/index';
 import { RpcConsumerMessage } from '../../src/rpc-queue/consumer/rpc-consumer-message';
 import { rabbitOptions } from './init.spec';
 
@@ -62,5 +62,30 @@ describe('RPC communication', () => {
     const message: ExampleMessage = new ExampleMessage(4);
     consumer.startConsumingQueue();
     await expect(publisher.dispatchMessage<ExampleResponseMessage>(message, {}, 2 * 1000)).to.be.rejected;
+  }).timeout(4 * 1000);
+
+  // tslint:disable-next-line:mocha-no-side-effect-code
+  it('should schedule a new RPC request message which will be errored by the consumer', async () => {
+    const message: ExampleMessage = new ExampleMessage(4);
+
+    // Now let's attach a Rpc consumer and start listening for messages
+    consumer.on<ExampleMessage, ExampleResponseMessage>(
+      'exampleMessageId',
+      (msg: RpcConsumerMessage<ExampleMessage, ExampleResponseMessage>) => {
+        msg.reply(null, MessageStatus.UnprocessableEntity, new Error('Arguments are not valid'));
+      }
+    );
+    consumer.startConsumingQueue();
+    try {
+      await publisher.dispatchMessage<ExampleResponseMessage>(message, {}, 2 * 1000);
+      expect.fail(
+        'No error thrown',
+        'Throw an error',
+        'Dispatch message has succeded, but it was expected to throw an error'
+      );
+    } catch (err) {
+      expect(err).to.be.an('object');
+      expect(err.message).to.be.equal('Arguments are not valid');
+    }
   }).timeout(4 * 1000);
 });
