@@ -34,7 +34,7 @@ describe('RPC communication', () => {
   });
 
   after(async () => {
-    // await controlChannel.deleteQueue(testQueueName);
+    await controlChannel.deleteQueue(testQueueName);
   });
 
   // tslint:disable-next-line:mocha-no-side-effect-code
@@ -61,8 +61,6 @@ describe('RPC communication', () => {
   it('should reject a scheduled message after a predefined timeout', async () => {
     const message: ExampleMessage = new ExampleMessage(4);
     consumer.startConsumingQueue();
-    expect(async () => {
-      await publisher.dispatchMessage<ExampleResponseMessage>(message, {}, 2 * 1000);
-    }).to.throw();
+    await expect(publisher.dispatchMessage<ExampleResponseMessage>(message, {}, 2 * 1000)).to.be.rejected;
   }).timeout(4 * 1000);
 });
