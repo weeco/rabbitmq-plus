@@ -14,7 +14,8 @@
     "completed-docs": false,
     "quotemark": [true, "single", "avoid-escape"],
     "no-parameter-properties": false,
-    "semicolon": [true, "always", "ignore-bound-class-methods"]
+    "semicolon": [true, "always", "ignore-bound-class-methods"],
+    "align": false
   },
   "rulesDirectory": []
 }
