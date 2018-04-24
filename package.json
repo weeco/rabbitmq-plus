@@ -23,7 +23,6 @@
   },
   "homepage": "https://github.com/weeco/rabbitmq-plus#readme",
   "devDependencies": {
-    "@types/amqplib": "^0.5.7",
     "@types/chai": "^4.1.2",
     "@types/chai-as-promised": "^7.1.0",
     "@types/dotenv": "^4.0.3",
@@ -41,6 +40,7 @@
     "typescript": "^2.8.1"
   },
   "dependencies": {
+    "@types/amqplib": "^0.5.7",
     "amqplib": "^0.5.2",
     "uuid": "^3.2.1"
   }
