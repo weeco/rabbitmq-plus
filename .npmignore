@@ -11,6 +11,7 @@ pull_request_template.md
 scripts
 src
 tests
+test
 tslint.json
 Jakefile.js
 .editorconfig
