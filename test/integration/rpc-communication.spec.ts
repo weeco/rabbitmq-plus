@@ -116,4 +116,26 @@ describe('RPC communication', () => {
       expect(err.message).to.be.equal('Test exception');
     }
   }).timeout(4 * 1000);
+
+  // tslint:disable-next-line:mocha-no-side-effect-code
+  it("should reject publisher messages with contexts which aren't listened to on the consumer", async () => {
+    const message: ExampleMessage = new ExampleMessage(4);
+
+    // Start consuming without any bound event handlers
+    consumer.startConsumingQueue();
+
+    try {
+      await publisher.dispatchMessage<ExampleResponseMessage>(message, {});
+      expect.fail(
+        'No error thrown',
+        'Throw an error',
+        'Dispatch message has succeded, but it was expected to throw an error'
+      );
+    } catch (err) {
+      expect(err).to.be.an('object');
+      expect(err.message).to.be.equal(
+        "Received a message with context 'exampleMessageId' but there is no listener bound for this context."
+      );
+    }
+  }).timeout(40 * 1000);
 });

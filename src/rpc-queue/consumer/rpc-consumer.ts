@@ -78,22 +78,12 @@ export class RpcConsumer {
     try {
       parsedData = this.parseMessageContent(msg);
       consumerMessage.setRequestMessagePayload(parsedData);
-    } catch (err) {
-      const descriptiveError: Error = new Error(
-        'Exception thrown while parsing the received publisher message. Please make sure you are sending a valid JSON object.'
-      );
-      consumerMessage.reply(undefined, MessageStatus.UnprocessableEntity, descriptiveError);
-      this.emitter.emit(this.exceptionEventName, descriptiveError);
-
-      return;
-    }
-
-    // Exception handling for exceptions thrown in the event handler
-    try {
       this.emitter.emit(parsedData.context, consumerMessage);
     } catch (err) {
       consumerMessage.reply(undefined, MessageStatus.UnprocessableEntity, err);
       this.emitter.emit(this.exceptionEventName, err);
+
+      return;
     }
   };
 
@@ -119,7 +109,7 @@ export class RpcConsumer {
    * @param eventName The event whose listener count shall be checked
    */
   private isListenerBound(eventName: string): boolean {
-    return this.emitter.listeners(eventName) != null;
+    return this.emitter.listeners(eventName).length > 0;
   }
 }
 
