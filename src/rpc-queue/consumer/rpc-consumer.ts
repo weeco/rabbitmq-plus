@@ -79,12 +79,11 @@ export class RpcConsumer {
       consumerMessage.setRequestMessagePayload(parsedData);
       this.emitter.emit(parsedData.context, consumerMessage);
     } catch (err) {
-      const errorMessage: IHasResponseFormat = {
-        error: <Error>err,
-        messageStatus: MessageStatus.UnprocessableEntity
-      };
-      consumerMessage.reply(errorMessage);
-      this.emitter.emit(this.exceptionEventName, err);
+      const descriptiveError: Error = new Error(
+        'Exception while trying to parse the received message content. Make sure you are sending a valid JSON object!'
+      );
+      consumerMessage.reply(undefined, MessageStatus.UnprocessableEntity, descriptiveError);
+      this.emitter.emit(this.exceptionEventName, descriptiveError);
     }
   };
 
