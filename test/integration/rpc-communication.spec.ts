@@ -94,4 +94,26 @@ describe('RPC communication', () => {
       expect(err.message).to.be.equal('Arguments are not valid');
     }
   }).timeout(4 * 1000);
+
+  // tslint:disable-next-line:mocha-no-side-effect-code
+  it('should handle exceptions thrown in the consuming handler', async () => {
+    const message: ExampleMessage = new ExampleMessage(4);
+
+    // Now let's attach a Rpc consumer and start listening for messages
+    consumer.on<ExampleMessage, ExampleResponseMessage>('exampleMessageId', () => {
+      throw new Error('Test exception');
+    });
+    consumer.startConsumingQueue();
+    try {
+      await publisher.dispatchMessage<ExampleResponseMessage>(message, {}, 2 * 1000);
+      expect.fail(
+        'No error thrown',
+        'Throw an error',
+        'Dispatch message has succeded, but it was expected to throw an error'
+      );
+    } catch (err) {
+      expect(err).to.be.an('object');
+      expect(err.message).to.be.equal('Test exception');
+    }
+  }).timeout(4 * 1000);
 });

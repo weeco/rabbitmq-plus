@@ -74,16 +74,26 @@ export class RpcConsumer {
       return;
     }
 
+    let parsedData: IHasContext;
     try {
-      const parsedData: IHasContext = this.parseMessageContent(msg);
+      parsedData = this.parseMessageContent(msg);
       consumerMessage.setRequestMessagePayload(parsedData);
-      this.emitter.emit(parsedData.context, consumerMessage);
     } catch (err) {
       const descriptiveError: Error = new Error(
-        'Exception while trying to parse the received message content. Make sure you are sending a valid JSON object!'
+        'Exception thrown while parsing the received publisher message. Please make sure you are sending a valid JSON object.'
       );
       consumerMessage.reply(undefined, MessageStatus.UnprocessableEntity, descriptiveError);
       this.emitter.emit(this.exceptionEventName, descriptiveError);
+
+      return;
+    }
+
+    // Exception handling for exceptions thrown in the event handler
+    try {
+      this.emitter.emit(parsedData.context, consumerMessage);
+    } catch (err) {
+      consumerMessage.reply(undefined, MessageStatus.UnprocessableEntity, err);
+      this.emitter.emit(this.exceptionEventName, err);
     }
   };
 
