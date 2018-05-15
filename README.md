@@ -1,6 +1,6 @@
 # RabbitMQ Plus
 
-An opinioniated library which abstracts the required business code for working with RabbitMQ away.
+An opinioniated library which abstracts away the required business code for working with RabbitMQ.
 This library allows you to use RabbitMQ without caring too much about the implementation of the communication patterns.
 Currently the only implemented communication pattern is the RPC communication with direct replies.
 
